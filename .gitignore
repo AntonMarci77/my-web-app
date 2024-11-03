@@ -1,0 +1,9 @@
+# Ignore all files by default
+*
+
+# Except these specific files for Heroku deployment
+!.gitignore
+!app.py
+!Procfile
+!requirements.txt
+!templates/
