@@ -3,7 +3,9 @@
 
 # Except these specific files for Heroku deployment
 !.gitignore
+!accounting_logic.py
 !app.py
 !Procfile
 !requirements.txt
 !templates/
+!templates/index.html
