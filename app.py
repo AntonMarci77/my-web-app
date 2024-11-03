@@ -6,9 +6,6 @@ import uuid
 app = Flask(__name__)
 app.secret_key = 'your_secret_key'  # For session management
 
-# Initialize the accounting logic
-accounting_app = AccountingApp()
-
 # Helper function to retrieve user's transactions from the session
 def get_user_transactions():
     return session.setdefault('transactions', [])
@@ -17,11 +14,27 @@ def get_user_transactions():
 def save_user_transactions(transactions):
     session['transactions'] = transactions
 
+# Helper function to update the accounting app with current user's transactions
+def update_accounting_app_with_transactions():
+    transactions = get_user_transactions()
+    accounting_app = AccountingApp()  # Reset for each session
+    for transaction in transactions:
+        accounting_app.add_transaction(
+            transaction['date'],
+            transaction['transaction_id'],
+            transaction['description'],
+            transaction['debit_account'],
+            transaction['credit_account'],
+            transaction['amount']
+        )
+    return accounting_app
+
 @app.route('/')
 def index():
+    accounting_app = update_accounting_app_with_transactions()  # Ensure up-to-date session data
     transactions = get_user_transactions()
-    financial_position = accounting_app.get_financial_position()  # Removed the transactions argument
-    income_statement = accounting_app.get_income_statement()      # Removed the transactions argument
+    financial_position = accounting_app.get_financial_position()
+    income_statement = accounting_app.get_income_statement()
     return render_template(
         'index.html',
         journal=transactions,
@@ -37,7 +50,7 @@ def add_transaction():
     debit_account = request.form['debit_account']
     credit_account = request.form['credit_account']
     amount = float(request.form['amount'])
-    
+
     # Create the transaction dictionary
     transaction = {
         'id': transaction_id,
@@ -48,12 +61,12 @@ def add_transaction():
         'credit_account': credit_account,
         'amount': amount
     }
-    
+
     # Save to user's session
     transactions = get_user_transactions()
     transactions.append(transaction)
     save_user_transactions(transactions)
-    
+
     return redirect(url_for('index'))
 
 @app.route('/delete_transaction/<transaction_id>', methods=['POST'])
