@@ -20,8 +20,8 @@ def save_user_transactions(transactions):
 @app.route('/')
 def index():
     transactions = get_user_transactions()
-    financial_position = accounting_app.get_financial_position(transactions)
-    income_statement = accounting_app.get_income_statement(transactions)
+    financial_position = accounting_app.get_financial_position()  # Removed the transactions argument
+    income_statement = accounting_app.get_income_statement()      # Removed the transactions argument
     return render_template(
         'index.html',
         journal=transactions,
