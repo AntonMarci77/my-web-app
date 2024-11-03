@@ -64,7 +64,7 @@
                         {% for entry in journal %}
                             <tr>
                                 <td>{{ entry.date }}</td>
-                                <td>{{ entry.transaction_id }}</td>
+                                <td>{{ entry.transaction_id }}</td> <!-- Shows user-provided Transaction ID -->
                                 <td>{{ entry.description }}</td>
                                 <td>{{ entry.debit_account }}</td>
                                 <td>{{ entry.credit_account }}</td>
@@ -78,6 +78,7 @@
                                     <button class="btn btn-warning btn-sm" onclick="showEditForm('{{ entry.id }}')">Edit</button>
                                     <form action="{{ url_for('edit_transaction', transaction_id=entry.id) }}" method="post" id="editForm-{{ entry.id }}" style="display:none;">
                                         <input type="text" name="date" value="{{ entry.date }}" required class="form-control mb-1">
+                                        <input type="text" name="transaction_id" value="{{ entry.transaction_id }}" required class="form-control mb-1"> <!-- User-provided Transaction ID -->
                                         <input type="text" name="description" value="{{ entry.description }}" required class="form-control mb-1">
                                         <input type="text" name="debit_account" value="{{ entry.debit_account }}" required class="form-control mb-1">
                                         <input type="text" name="credit_account" value="{{ entry.credit_account }}" required class="form-control mb-1">

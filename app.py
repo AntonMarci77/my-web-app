@@ -21,7 +21,7 @@ def update_accounting_app_with_transactions():
     for transaction in transactions:
         accounting_app.add_transaction(
             transaction['date'],
-            transaction['transaction_id'],
+            transaction['transaction_id'],  # Use the user-provided transaction ID
             transaction['description'],
             transaction['debit_account'],
             transaction['credit_account'],
@@ -45,17 +45,18 @@ def index():
 @app.route('/add_transaction', methods=['POST'])
 def add_transaction():
     date = request.form['date']
-    transaction_id = str(uuid.uuid4())  # Unique identifier for each transaction
+    user_transaction_id = request.form['transaction_id']  # Use user-provided ID
+    unique_id = str(uuid.uuid4())  # Generate unique identifier for internal tracking
     description = request.form['description']
     debit_account = request.form['debit_account']
     credit_account = request.form['credit_account']
     amount = float(request.form['amount'])
 
-    # Create the transaction dictionary
+    # Create the transaction dictionary with both user and unique IDs
     transaction = {
-        'id': transaction_id,
+        'id': unique_id,  # Internal unique identifier
         'date': date,
-        'transaction_id': transaction_id,
+        'transaction_id': user_transaction_id,  # Displayed in journal
         'description': description,
         'debit_account': debit_account,
         'credit_account': credit_account,
@@ -82,6 +83,7 @@ def edit_transaction(transaction_id):
     for transaction in transactions:
         if transaction['id'] == transaction_id:
             transaction['date'] = request.form['date']
+            transaction['transaction_id'] = request.form['transaction_id']  # Update user ID if needed
             transaction['description'] = request.form['description']
             transaction['debit_account'] = request.form['debit_account']
             transaction['credit_account'] = request.form['credit_account']
